@@ -1,0 +1,70 @@
+{
+  "nav": {
+    "product": "Produkt",
+    "pricing": "Preise",
+    "download": "Download",
+    "enterprise": "Enterprise",
+    "signIn": "Anmelden"
+  },
+  "hero": {
+    "eyebrow": "Ermine Community",
+    "title": "EmbeddedFlow für präzise UI-Systeme",
+    "titleAccent": "präzise",
+    "lead": "Mehr als statische Design-Tools — UI an Code-Symbole binden, bald auch an MQTT und Protokolle. Kostenlos für den privaten Gebrauch.",
+    "ctaPro": "Pro holen",
+    "ctaFree": "Kostenlos starten"
+  },
+  "features": {
+    "title": "Mehr als ein UI-Maler",
+    "lead": "EmbeddedFlow verbindet Designabsicht mit echten Systemen — nicht nur exportierbare Screens.",
+    "f1Title": "Symbol-Bindung",
+    "f1Body": "Pro schaltet die Bindung von UI-Elementen an Code-Symbole frei.",
+    "f2Title": "Protokolle folgen",
+    "f2Body": "MQTT und weitere Protokoll-Bindungen stehen auf der Pro-Roadmap.",
+    "f3Title": "IDE-nativ",
+    "f3Body": "Lizenzschlüssel in VS Code, Eclipse oder Visual Studio aktivieren — ein Nutzer, ein Gerät."
+  },
+  "pricing": {
+    "title": "Einfache Pläne",
+    "lead": "Ein Seat. Ein Gerät. Upgrade, wenn Symbol-Bindung und Support nötig sind.",
+    "free": "Free",
+    "pro": "Pro",
+    "enterprise": "Enterprise",
+    "freePrice": "€0",
+    "comingSoon": "Preise folgen",
+    "contact": "Vertrieb kontaktieren",
+    "freeItems": ["Privater Gebrauch", "Kein Konto nötig", "Kern von EmbeddedFlow"],
+    "proItems": ["Symbol-Bindung", "MQTT / Protokolle (bald)", "Monatlich oder jährlich"],
+    "entItems": ["Alles aus Pro", "Priority-Support", "Begleitetes Onboarding"]
+  },
+  "download": {
+    "title": "Erweiterungen",
+    "lead": "EmbeddedFlow dort installieren, wo Sie bereits arbeiten.",
+    "vscode": "VS Code",
+    "eclipse": "Eclipse",
+    "vs": "Visual Studio",
+    "hint": "Free ohne Anmeldung. Pro mit Lizenzschlüssel aktivieren."
+  },
+  "enterprise": {
+    "title": "Enterprise",
+    "lead": "Gleiche Pro-Funktionen mit dediziertem Support. Erzählen Sie uns von Ihrem Team.",
+    "name": "Name",
+    "email": "Geschäftliche E-Mail",
+    "company": "Unternehmen",
+    "message": "Nachricht",
+    "submit": "Anfrage senden",
+    "thanks": "Danke — wir melden uns."
+  },
+  "footer": {
+    "privacy": "Datenschutz",
+    "terms": "AGB",
+    "cookies": "Cookies",
+    "imprint": "Impressum",
+    "rights": "Ermine Community"
+  },
+  "cookies": {
+    "text": "Wir nutzen notwendige Cookies für den Betrieb der Seite. Optionale Analyse bleibt aus, bis Sie zustimmen.",
+    "necessary": "Nur notwendig",
+    "accept": "Alle akzeptieren"
+  }
+}

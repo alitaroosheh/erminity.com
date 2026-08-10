@@ -1,0 +1,70 @@
+{
+  "nav": {
+    "product": "Product",
+    "pricing": "Pricing",
+    "download": "Download",
+    "enterprise": "Enterprise",
+    "signIn": "Sign in"
+  },
+  "hero": {
+    "eyebrow": "Ermine Community",
+    "title": "EmbeddedFlow for exact embedded UI",
+    "titleAccent": "exact",
+    "lead": "Beyond static design tools — bind UI to code symbols, and soon to MQTT and protocols. Free for personal use.",
+    "ctaPro": "Get Pro",
+    "ctaFree": "Start free"
+  },
+  "features": {
+    "title": "More than a UI painter",
+    "lead": "EmbeddedFlow connects design intent to real systems — not just exportable screens.",
+    "f1Title": "Code symbol binding",
+    "f1Body": "Pro unlocks binding interface elements to symbols in your codebase.",
+    "f2Title": "Protocols ahead",
+    "f2Body": "MQTT and other protocol bindings for live UI objects are on the Pro roadmap.",
+    "f3Title": "IDE-native",
+    "f3Body": "Activate a license key in VS Code, Eclipse, or Visual Studio — one user, one device."
+  },
+  "pricing": {
+    "title": "Simple plans",
+    "lead": "One seat. One device. Upgrade when you need symbol binding and support.",
+    "free": "Free",
+    "pro": "Pro",
+    "enterprise": "Enterprise",
+    "freePrice": "€0",
+    "comingSoon": "Pricing coming soon",
+    "contact": "Contact sales",
+    "freeItems": ["Personal use", "No account required", "Core EmbeddedFlow"],
+    "proItems": ["Code symbol binding", "Future MQTT / protocols", "Monthly or yearly"],
+    "entItems": ["Everything in Pro", "Priority support", "Guided onboarding"]
+  },
+  "download": {
+    "title": "Extensions",
+    "lead": "Install EmbeddedFlow where you already work.",
+    "vscode": "VS Code",
+    "eclipse": "Eclipse",
+    "vs": "Visual Studio",
+    "hint": "Free works without signup. Pro activates with your license key."
+  },
+  "enterprise": {
+    "title": "Enterprise",
+    "lead": "Same Pro capabilities with dedicated support. Tell us about your team.",
+    "name": "Name",
+    "email": "Work email",
+    "company": "Company",
+    "message": "Message",
+    "submit": "Send inquiry",
+    "thanks": "Thanks — we will get back to you."
+  },
+  "footer": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies",
+    "imprint": "Imprint",
+    "rights": "Ermine Community"
+  },
+  "cookies": {
+    "text": "We use necessary cookies to run the site. Optional analytics stay off until you allow them.",
+    "necessary": "Necessary only",
+    "accept": "Accept all"
+  }
+}

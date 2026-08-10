@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: erminity
+      POSTGRES_USER: erminity
+      POSTGRES_PASSWORD: erminity
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U erminity -d erminity"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./src/Erminity.Api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Default: Host=db;Port=5432;Database=erminity;Username=erminity;Password=erminity
+      Cors__Origins__0: http://localhost:8088
+      Seed__AdminEmail: admin@erminity.com
+      Seed__AdminPassword: ChangeMe!Erminity1
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5080:8080"
+
+  web:
+    build:
+      context: ./src/Erminity.Web
+    depends_on:
+      - api
+    ports:
+      - "8088:80"
+
+volumes:
+  pgdata:

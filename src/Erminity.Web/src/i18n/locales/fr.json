@@ -1,0 +1,70 @@
+{
+  "nav": {
+    "product": "Produit",
+    "pricing": "Tarifs",
+    "download": "Télécharger",
+    "enterprise": "Entreprise",
+    "signIn": "Connexion"
+  },
+  "hero": {
+    "eyebrow": "Ermine Community",
+    "title": "EmbeddedFlow pour des interfaces exactes",
+    "titleAccent": "exactes",
+    "lead": "Au-delà des outils de design statiques — liez l’UI aux symboles du code, puis bientôt à MQTT et aux protocoles. Gratuit pour un usage personnel.",
+    "ctaPro": "Passer à Pro",
+    "ctaFree": "Commencer gratuitement"
+  },
+  "features": {
+    "title": "Plus qu’un peintre d’UI",
+    "lead": "EmbeddedFlow relie l’intention de design aux systèmes réels — pas seulement des écrans exportables.",
+    "f1Title": "Liaison de symboles",
+    "f1Body": "Pro débloque la liaison des éléments d’interface aux symboles du code.",
+    "f2Title": "Protocoles à venir",
+    "f2Body": "MQTT et d’autres liaisons de protocoles sont sur la feuille de route Pro.",
+    "f3Title": "Natif IDE",
+    "f3Body": "Activez une clé de licence dans VS Code, Eclipse ou Visual Studio — un utilisateur, un appareil."
+  },
+  "pricing": {
+    "title": "Offres simples",
+    "lead": "Un siège. Un appareil. Passez à Pro pour la liaison de symboles et le support.",
+    "free": "Free",
+    "pro": "Pro",
+    "enterprise": "Enterprise",
+    "freePrice": "€0",
+    "comingSoon": "Tarifs bientôt",
+    "contact": "Contacter les ventes",
+    "freeItems": ["Usage personnel", "Sans compte", "EmbeddedFlow de base"],
+    "proItems": ["Liaison de symboles", "MQTT / protocoles (bientôt)", "Mensuel ou annuel"],
+    "entItems": ["Tout Pro", "Support prioritaire", "Onboarding guidé"]
+  },
+  "download": {
+    "title": "Extensions",
+    "lead": "Installez EmbeddedFlow là où vous travaillez déjà.",
+    "vscode": "VS Code",
+    "eclipse": "Eclipse",
+    "vs": "Visual Studio",
+    "hint": "Free sans inscription. Pro s’active avec votre clé."
+  },
+  "enterprise": {
+    "title": "Enterprise",
+    "lead": "Les capacités Pro avec un support dédié. Parlez-nous de votre équipe.",
+    "name": "Nom",
+    "email": "E-mail professionnel",
+    "company": "Société",
+    "message": "Message",
+    "submit": "Envoyer",
+    "thanks": "Merci — nous vous répondrons."
+  },
+  "footer": {
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "cookies": "Cookies",
+    "imprint": "Mentions légales",
+    "rights": "Ermine Community"
+  },
+  "cookies": {
+    "text": "Nous utilisons des cookies nécessaires. L’analytique optionnelle reste désactivée jusqu’à votre accord.",
+    "necessary": "Nécessaires seulement",
+    "accept": "Tout accepter"
+  }
+}
