@@ -245,7 +245,7 @@ Goal: production-hardened by default; reduce fingerprinting; block common vulns.
 
 ### 8.3 Auth stack
 
-- [x] Preference: **OpenIddict** on ASP.NET Core
+- [x] Preference: **OpenIddict** on ASP.NET Core **10** (.NET 10)
 - [x] OpenIddict authorization server configured
 - [x] Auth code + PKCE for SPA (avoid insecure implicit flows)
 - [ ] Refresh tokens; secure storage strategy for SPA
@@ -314,7 +314,7 @@ Audience includes **EU and US** (and worldwide). Design for GDPR as baseline; ma
 
 | Layer | Choice |
 |---|---|
-| Backend | ASP.NET Core (C#) |
+| Backend | **.NET 10** / ASP.NET Core 10 (C#) — `TargetFramework: net10.0` |
 | Auth | OpenIddict + ASP.NET Identity |
 | Frontend | React (Vite) + prerender/SSR strategy for public SEO pages |
 | DB | PostgreSQL |
@@ -412,6 +412,7 @@ Ignore prior experiments under sibling folders (`ErmineBroker`, `Erminity.com ol
 | 2026-08-09 | Theme Ermine Night approved |
 | 2026-08-09 | Prices from admin/config with placeholders |
 | 2026-08-09 | Project path `D:\Works\erminity.com\Erminity.com` |
+| 2026-08-10 | Backend locked to **.NET 10** / ASP.NET Core 10 (`net10.0`) everywhere |
 | 2026-08-09 | Public site content fully CMS-driven (favicon → slogan → copy → images+alt) |
 | 2026-08-09 | SEO required (meta, hreflang, sitemap, JSON-LD, prerender/SSR for public) |
 | 2026-08-09 | Harden security: hide stack versions, OWASP controls, CSP, etc. |

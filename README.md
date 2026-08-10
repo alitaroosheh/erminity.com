@@ -4,7 +4,7 @@ Cloud-agnostic license & marketing platform for **EmbeddedFlow**.
 
 ## Stack
 
-- Backend: ASP.NET Core + OpenIddict + Identity + PostgreSQL
+- Backend: **.NET 10** / ASP.NET Core 10 + OpenIddict + Identity + PostgreSQL
 - Frontend: React + Vite + i18n (EN/DE/FR/AR + RTL)
 - Payments: Paddle (MoR) — wiring in later phase
 - Email: Resend abstraction
