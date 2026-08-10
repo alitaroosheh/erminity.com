@@ -1,17 +1,9 @@
-import { NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { NavLink, Outlet, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CookieBanner } from './CookieBanner'
+import { LanguageMenu } from './LanguageMenu'
 import { useAuth } from '../auth/AuthContext'
-import { SUPPORTED_LOCALES } from '../i18n'
-
-const LANGS = [
-  { code: 'en', label: 'English' },
-  { code: 'de', label: 'Deutsch' },
-  { code: 'fr', label: 'Français' },
-  { code: 'ar', label: 'العربية' },
-  { code: 'fa', label: 'فارسی' },
-] as const
 
 type SiteInfo = {
   siteName: string
@@ -20,20 +12,9 @@ type SiteInfo = {
   logoUrl?: string | null
 }
 
-function swapLocalePath(pathname: string, nextLocale: string) {
-  const parts = pathname.split('/')
-  if (parts.length > 1 && (SUPPORTED_LOCALES as readonly string[]).includes(parts[1])) {
-    parts[1] = nextLocale
-    return parts.join('/') || `/${nextLocale}`
-  }
-  return `/${nextLocale}`
-}
-
 export function Layout() {
   const { t } = useTranslation()
   const { locale = 'en' } = useParams()
-  const location = useLocation()
-  const navigate = useNavigate()
   const prefix = `/${locale}`
   const { user, loading } = useAuth()
   const [site, setSite] = useState<SiteInfo>({ siteName: 'Erminity', slogan: 'Ermine Community' })
@@ -89,23 +70,7 @@ export function Layout() {
           </nav>
 
           <div className="header-actions">
-            <label className="lang-dropdown">
-              <span className="visually-hidden">Language</span>
-              <select
-                aria-label="Language"
-                value={locale}
-                onChange={(e) => {
-                  const next = e.target.value
-                  navigate(swapLocalePath(location.pathname, next))
-                }}
-              >
-                {LANGS.map((l) => (
-                  <option key={l.code} value={l.code}>
-                    {l.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <LanguageMenu />
             {!loading && user ? (
               <NavLink className="btn btn-primary" to={`${prefix}/account`}>
                 {user.displayName || t('nav.account')}

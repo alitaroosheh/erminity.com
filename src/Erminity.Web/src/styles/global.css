@@ -180,32 +180,73 @@ img {
   gap: 0.55rem;
 }
 
-.lang-dropdown {
+.lang-menu {
   position: relative;
-  display: inline-flex;
-  align-items: center;
+  z-index: 60;
 }
 
-.lang-dropdown select {
-  appearance: none;
-  -webkit-appearance: none;
+.lang-menu__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   border: 1px solid var(--border);
-  background:
-    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%) right 0.85rem center / 0.35rem 0.35rem no-repeat,
-    linear-gradient(135deg, transparent 50%, var(--text-muted) 50%) right 0.55rem center / 0.35rem 0.35rem no-repeat,
-    rgba(232, 238, 244, 0.04);
+  background: var(--surface);
   color: var(--text);
-  padding: 0.45rem 2rem 0.45rem 0.75rem;
+  padding: 0.45rem 0.8rem;
   border-radius: 999px;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  min-width: 7.5rem;
+  min-width: 7.8rem;
+  justify-content: space-between;
 }
 
-.lang-dropdown select:focus {
-  outline: 2px solid rgba(212, 160, 23, 0.35);
-  outline-offset: 1px;
+.lang-menu__chevron {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-inline-end: 1.5px solid var(--text-muted);
+  border-bottom: 1.5px solid var(--text-muted);
+  transform: rotate(45deg);
+  margin-top: -0.2rem;
+  transition: transform 0.2s ease;
+}
+
+.lang-menu.is-open .lang-menu__chevron {
+  transform: rotate(225deg);
+  margin-top: 0.15rem;
+}
+
+.lang-menu__list {
+  position: absolute;
+  inset-inline-end: 0;
+  top: calc(100% + 0.4rem);
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  min-width: 11rem;
+  border-radius: 0.9rem;
+  border: 1px solid var(--border);
+  background: #1a222c;
+  box-shadow: var(--shadow);
+}
+
+.lang-menu__option {
+  width: 100%;
+  text-align: start;
+  border: 0;
+  background: transparent;
+  color: #e8eef4;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.65rem;
+  cursor: pointer;
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
+.lang-menu__option:hover,
+.lang-menu__option.is-active {
+  background: rgba(212, 160, 23, 0.16);
+  color: #f0c75a;
 }
 
 .visually-hidden {
