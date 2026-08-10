@@ -225,7 +225,7 @@ public class AdminController : ControllerBase
             return Conflict(new { error = "slug_taken" });
 
         var page = new CmsPage { Id = Guid.NewGuid(), Slug = slug, IsPublished = false };
-        foreach (var loc in new[] { "en", "de", "fr", "ar" })
+        foreach (var loc in new[] { "en", "de", "fr", "ar", "fa" })
         {
             page.Locales.Add(new CmsPageLocale
             {
@@ -374,7 +374,7 @@ public class AdminController : ControllerBase
     private static string NormalizeLocale(string locale) =>
         locale.ToLowerInvariant() switch
         {
-            "de" or "fr" or "ar" or "en" => locale.ToLowerInvariant(),
+            "de" or "fr" or "ar" or "fa" or "en" => locale.ToLowerInvariant(),
             _ => "en"
         };
 

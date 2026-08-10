@@ -5,6 +5,10 @@ import en from './locales/en.json'
 import de from './locales/de.json'
 import fr from './locales/fr.json'
 import ar from './locales/ar.json'
+import fa from './locales/fa.json'
+
+export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'ar', 'fa'] as const
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number]
 
 void i18n
   .use(LanguageDetector)
@@ -15,9 +19,10 @@ void i18n
       de: { translation: de },
       fr: { translation: fr },
       ar: { translation: ar },
+      fa: { translation: fa },
     },
     fallbackLng: 'en',
-    supportedLngs: ['en', 'de', 'fr', 'ar'],
+    supportedLngs: [...SUPPORTED_LOCALES],
     interpolation: { escapeValue: false },
     detection: {
       order: ['path', 'localStorage', 'navigator'],
@@ -28,5 +33,5 @@ void i18n
 export default i18n
 
 export function isRtl(lng: string) {
-  return lng === 'ar'
+  return lng === 'ar' || lng === 'fa'
 }

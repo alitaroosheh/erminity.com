@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { SUPPORTED_LOCALES } from './i18n'
 import { AuthProvider } from './auth/AuthContext'
 import { Layout } from './components/Layout'
 import { HomePage } from './pages/HomePage'
@@ -18,7 +19,7 @@ import { AdminPages } from './admin/AdminPages'
 import { AdminPageEdit } from './admin/AdminPageEdit'
 import { AdminContacts } from './admin/AdminContacts'
 
-const LOCALES = ['en', 'de', 'fr', 'ar'] as const
+const LOCALES = SUPPORTED_LOCALES
 
 function LocaleGate({ children }: { children: React.ReactNode }) {
   const { locale } = useParams()

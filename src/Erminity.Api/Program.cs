@@ -267,10 +267,25 @@ using (var scope = app.Services.CreateScope())
                 SeedLocale("ar", "الرئيسية", "EmbeddedFlow لواجهات مدمجة دقيقة",
                     "أبعد من أدوات التصميم الثابتة — اربط الواجهة برموز الشيفرة.",
                     "الحصول على Pro", "ابدأ مجاناً"),
+                SeedLocale("fa", "خانه", "EmbeddedFlow برای رابط کاربری دقیق embedded",
+                    "فراتر از ابزارهای طراحی ایستا — اتصال UI به سیمبل‌های کد.",
+                    "دریافت Pro", "شروع رایگان"),
             }
         };
         db.CmsPages.Add(home);
         await db.SaveChangesAsync();
+    }
+    else
+    {
+        var home = await db.CmsPages.Include(p => p.Locales).FirstAsync(p => p.Slug == "home");
+        if (!home.Locales.Any(l => l.Locale == "fa"))
+        {
+            home.Locales.Add(SeedLocale("fa", "خانه", "EmbeddedFlow برای رابط کاربری دقیق embedded",
+                "فراتر از ابزارهای طراحی ایستا — اتصال UI به سیمبل‌های کد.",
+                "دریافت Pro", "شروع رایگان"));
+            home.UpdatedAt = DateTimeOffset.UtcNow;
+            await db.SaveChangesAsync();
+        }
     }
 }
 

@@ -109,7 +109,7 @@ public class PublicController : ControllerBase
     private static string NormalizeLocale(string locale) =>
         locale.ToLowerInvariant() switch
         {
-            "de" or "fr" or "ar" or "en" => locale.ToLowerInvariant(),
+            "de" or "fr" or "ar" or "fa" or "en" => locale.ToLowerInvariant(),
             _ => "en"
         };
 
@@ -132,6 +132,9 @@ public class PublicController : ControllerBase
             "ar" => ("الرئيسية", "EmbeddedFlow لواجهات مدمجة دقيقة",
                 "من التصميم إلى التشغيل — ربط الرموز والبروتوكولات في خطة Pro.",
                 "الحصول على Pro", "ابدأ مجاناً"),
+            "fa" => ("خانه", "EmbeddedFlow برای رابط کاربری دقیق embedded",
+                "فراتر از ابزارهای طراحی ایستا — اتصال UI به سیمبل‌های کد و به‌زودی MQTT و پروتکل‌ها.",
+                "دریافت Pro", "شروع رایگان"),
             _ => ("Home", "EmbeddedFlow for exact embedded UI",
                 "Beyond static design tools — bind UI to code symbols, and soon to MQTT and protocols.",
                 "Get Pro", "Start free")

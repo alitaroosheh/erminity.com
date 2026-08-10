@@ -69,11 +69,11 @@ Theme name: **Ermine Night**
 
 ## 3. Localization
 
-- [x] Languages v1: **English, German, French, Arabic**
-- [x] No Persian in v1
+- [x] Languages v1: **English, German, French, Arabic, Persian (Farsi)**
+- [x] Persian included with RTL
 - [x] Architecture must allow adding languages later
-- [x] **RTL** required (Arabic)
-- [x] i18n for **app chrome** (dashboard buttons, validation, system UI)
+- [x] **RTL** required (Arabic + Persian)
+- [x] Language UI: dropdown selector (preserves current path)- [x] i18n for **app chrome** (dashboard buttons, validation, system UI)
 - [ ] **Marketing/content strings** come from CMS per locale (not only static JSON)
 - [x] Language switcher in UI
 - [x] Locale detection / default English
@@ -349,7 +349,7 @@ Ignore prior experiments under sibling folders (`ErmineBroker`, `Erminity.com ol
 
 ## 13. Non-goals (v1)
 
-- [x] Persian UI
+- [x] Persian UI (added with RTL; language dropdown)
 - [x] Self-hosted mail server as primary sender
 - [x] Stripe as MoR/payment (decided against; Paddle)
 - [x] Unlimited devices per seat
@@ -412,7 +412,7 @@ Ignore prior experiments under sibling folders (`ErmineBroker`, `Erminity.com ol
 | 2026-08-09 | Theme Ermine Night approved |
 | 2026-08-09 | Prices from admin/config with placeholders |
 | 2026-08-09 | Project path `D:\Works\erminity.com\Erminity.com` |
-| 2026-08-10 | Backend locked to **.NET 10** / ASP.NET Core 10 (`net10.0`) everywhere |
+| 2026-08-10 | Language switcher becomes dropdown; Persian (`fa`) added with RTL |
 | 2026-08-09 | Public site content fully CMS-driven (favicon → slogan → copy → images+alt) |
 | 2026-08-09 | SEO required (meta, hreflang, sitemap, JSON-LD, prerender/SSR for public) |
 | 2026-08-09 | Harden security: hide stack versions, OWASP controls, CSP, etc. |

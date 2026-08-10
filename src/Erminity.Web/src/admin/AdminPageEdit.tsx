@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { adminGet, adminPut, MediaItem, PageDetail } from './api'
 
-const LOCALES = ['en', 'de', 'fr', 'ar']
+const LOCALES = ['en', 'de', 'fr', 'ar', 'fa']
 
 type Block = {
   type: string
