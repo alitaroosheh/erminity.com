@@ -22,6 +22,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseOpenIddict();
 });
 
+var hasResendKey = !string.IsNullOrWhiteSpace(builder.Configuration["Email:Resend:ApiKey"]);
+
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
@@ -30,10 +32,31 @@ builder.Services
         options.Password.RequireUppercase = true;
         options.Password.RequireNonAlphanumeric = true;
         options.User.RequireUniqueEmail = true;
-        options.SignIn.RequireConfirmedEmail = true;
+        // Require confirmed email only when Resend is configured (or force later).
+        options.SignIn.RequireConfirmedEmail = hasResendKey && !builder.Environment.IsDevelopment();
     })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = "erminity.auth";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.SlidingExpiration = true;
+    options.ExpireTimeSpan = TimeSpan.FromDays(14);
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        return Task.CompletedTask;
+    };
+});
 
 builder.Services.AddOpenIddict()
     .AddCore(options => options.UseEntityFrameworkCore().UseDbContext<AppDbContext>())
@@ -111,7 +134,7 @@ builder.Services.AddControllers();
 builder.Services.AddHttpClient<IEmailSender, ResendEmailSender>();
 
 var corsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>()
-                  ?? ["http://localhost:5173", "http://localhost:3000"];
+                  ?? ["http://localhost:5173", "http://localhost:3000", "http://localhost:8088"];
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Web", policy =>
@@ -145,7 +168,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseCors("Web");
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { CookieBanner } from './CookieBanner'
+import { useAuth } from '../auth/AuthContext'
 
 const LANGS = [
   { code: 'en', label: 'EN' },
@@ -13,6 +14,7 @@ export function Layout() {
   const { t } = useTranslation()
   const { locale = 'en' } = useParams()
   const prefix = `/${locale}`
+  const { user, loading } = useAuth()
 
   return (
     <>
@@ -47,9 +49,15 @@ export function Layout() {
                 </NavLink>
               ))}
             </div>
-            <a className="btn btn-ghost" href={`${prefix}/enterprise`}>
-              {t('nav.signIn')}
-            </a>
+            {!loading && user ? (
+              <NavLink className="btn btn-primary" to={`${prefix}/account`}>
+                {user.displayName || t('nav.account')}
+              </NavLink>
+            ) : (
+              <NavLink className="btn btn-ghost" to={`${prefix}/signin`}>
+                {t('nav.signIn')}
+              </NavLink>
+            )}
           </div>
         </div>
       </header>

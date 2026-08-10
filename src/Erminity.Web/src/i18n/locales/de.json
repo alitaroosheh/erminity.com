@@ -4,7 +4,37 @@
     "pricing": "Preise",
     "download": "Download",
     "enterprise": "Enterprise",
-    "signIn": "Anmelden"
+    "signIn": "Anmelden",
+    "account": "Konto"
+  },
+  "auth": {
+    "signInTitle": "Anmelden",
+    "signInLead": "Lizenzen, Geräte und Abrechnung verwalten.",
+    "signUpTitle": "Konto erstellen",
+    "signUpLead": "Für Pro und Enterprise nötig. Free funktioniert ohne Konto.",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "displayName": "Anzeigename",
+    "passwordHint": "Mindestens 10 Zeichen, mit Großbuchstabe, Ziffer und Symbol.",
+    "signInSubmit": "Anmelden",
+    "signUpSubmit": "Konto erstellen",
+    "signOut": "Abmelden",
+    "noAccount": "Noch kein Konto?",
+    "hasAccount": "Bereits registriert?",
+    "signUpLink": "Registrieren",
+    "signInLink": "Anmelden",
+    "accountTitle": "Ihr Konto",
+    "accountLead": "Lizenz- und Abrechnungsverwaltung folgt als Nächstes.",
+    "roles": "Rollen",
+    "loading": "Laden…",
+    "errors": {
+      "invalid": "E-Mail oder Passwort ist falsch.",
+      "unconfirmed": "Bitte E-Mail zuerst bestätigen.",
+      "locked": "Zu viele Versuche. Später erneut versuchen.",
+      "taken": "Diese E-Mail ist bereits registriert.",
+      "registerFailed": "Konto konnte nicht erstellt werden. Passwortregeln prüfen.",
+      "generic": "Etwas ist schiefgelaufen. Erneut versuchen."
+    }
   },
   "hero": {
     "eyebrow": "Ermine Community",

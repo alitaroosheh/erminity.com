@@ -4,7 +4,37 @@
     "pricing": "الأسعار",
     "download": "التنزيل",
     "enterprise": "المؤسسات",
-    "signIn": "تسجيل الدخول"
+    "signIn": "تسجيل الدخول",
+    "account": "الحساب"
+  },
+  "auth": {
+    "signInTitle": "تسجيل الدخول",
+    "signInLead": "إدارة التراخيص والأجهزة والفوترة.",
+    "signUpTitle": "إنشاء حساب",
+    "signUpLead": "مطلوب لـ Pro و Enterprise. الإصدار المجاني يعمل بدون حساب.",
+    "email": "البريد",
+    "password": "كلمة المرور",
+    "displayName": "الاسم الظاهر",
+    "passwordHint": "١٠ أحرف على الأقل مع حرف كبير ورقم ورمز.",
+    "signInSubmit": "دخول",
+    "signUpSubmit": "إنشاء الحساب",
+    "signOut": "خروج",
+    "noAccount": "ليس لديك حساب؟",
+    "hasAccount": "لديك حساب بالفعل؟",
+    "signUpLink": "إنشاء حساب",
+    "signInLink": "تسجيل الدخول",
+    "accountTitle": "حسابك",
+    "accountLead": "إدارة الترخيص والفوترة قادمة لاحقاً.",
+    "roles": "الأدوار",
+    "loading": "جارٍ التحميل…",
+    "errors": {
+      "invalid": "البريد أو كلمة المرور غير صحيحة.",
+      "unconfirmed": "أكد بريدك قبل تسجيل الدخول.",
+      "locked": "محاولات كثيرة. حاول لاحقاً.",
+      "taken": "هذا البريد مسجّل مسبقاً.",
+      "registerFailed": "تعذر إنشاء الحساب. تحقق من قواعد كلمة المرور.",
+      "generic": "حدث خطأ. حاول مجدداً."
+    }
   },
   "hero": {
     "eyebrow": "Ermine Community",

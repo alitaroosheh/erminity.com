@@ -4,7 +4,37 @@
     "pricing": "Pricing",
     "download": "Download",
     "enterprise": "Enterprise",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "account": "Account"
+  },
+  "auth": {
+    "signInTitle": "Sign in",
+    "signInLead": "Access your licenses, devices, and billing.",
+    "signUpTitle": "Create account",
+    "signUpLead": "Needed for Pro and Enterprise. Free EmbeddedFlow still works without an account.",
+    "email": "Email",
+    "password": "Password",
+    "displayName": "Display name",
+    "passwordHint": "At least 10 characters, with upper, digit, and symbol.",
+    "signInSubmit": "Sign in",
+    "signUpSubmit": "Create account",
+    "signOut": "Sign out",
+    "noAccount": "No account yet?",
+    "hasAccount": "Already registered?",
+    "signUpLink": "Sign up",
+    "signInLink": "Sign in",
+    "accountTitle": "Your account",
+    "accountLead": "License and billing management come next.",
+    "roles": "Roles",
+    "loading": "Loading…",
+    "errors": {
+      "invalid": "Email or password is incorrect.",
+      "unconfirmed": "Confirm your email before signing in.",
+      "locked": "Too many attempts. Try again later.",
+      "taken": "That email is already registered.",
+      "registerFailed": "Could not create the account. Check password rules.",
+      "generic": "Something went wrong. Try again."
+    }
   },
   "hero": {
     "eyebrow": "Ermine Community",

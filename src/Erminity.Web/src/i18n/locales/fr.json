@@ -4,7 +4,37 @@
     "pricing": "Tarifs",
     "download": "Télécharger",
     "enterprise": "Entreprise",
-    "signIn": "Connexion"
+    "signIn": "Connexion",
+    "account": "Compte"
+  },
+  "auth": {
+    "signInTitle": "Connexion",
+    "signInLead": "Accédez à vos licences, appareils et facturation.",
+    "signUpTitle": "Créer un compte",
+    "signUpLead": "Nécessaire pour Pro et Enterprise. Free fonctionne sans compte.",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "displayName": "Nom affiché",
+    "passwordHint": "Au moins 10 caractères, avec majuscule, chiffre et symbole.",
+    "signInSubmit": "Se connecter",
+    "signUpSubmit": "Créer le compte",
+    "signOut": "Se déconnecter",
+    "noAccount": "Pas encore de compte ?",
+    "hasAccount": "Déjà inscrit ?",
+    "signUpLink": "S’inscrire",
+    "signInLink": "Se connecter",
+    "accountTitle": "Votre compte",
+    "accountLead": "La gestion des licences et de la facturation arrive ensuite.",
+    "roles": "Rôles",
+    "loading": "Chargement…",
+    "errors": {
+      "invalid": "E-mail ou mot de passe incorrect.",
+      "unconfirmed": "Confirmez votre e-mail avant de vous connecter.",
+      "locked": "Trop de tentatives. Réessayez plus tard.",
+      "taken": "Cet e-mail est déjà enregistré.",
+      "registerFailed": "Impossible de créer le compte. Vérifiez le mot de passe.",
+      "generic": "Une erreur s’est produite. Réessayez."
+    }
   },
   "hero": {
     "eyebrow": "Ermine Community",
