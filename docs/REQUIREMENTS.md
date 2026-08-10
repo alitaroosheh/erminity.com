@@ -369,18 +369,18 @@ Ignore prior experiments under sibling folders (`ErmineBroker`, `Erminity.com ol
 - [x] PostgreSQL core models: User, License, Device, Subscription, PricingConfig, ContactRequest
 - [x] CMS models: SiteSettings, Page, Section, Block, MediaAsset, SeoMetadata, ContentPublication
 - [x] Security header middleware + fingerprint suppression baseline
-- [ ] Admin CMS UI (deferred to Phase B)
-- [ ] Live Postgres/docker verification (Docker Desktop was not running at scaffold time)
+- [x] Admin CMS UI (deferred to Phase B)
+- [x] Live Postgres/docker verification
 
 ### Phase B — CMS, SEO, commerce & licenses
 
-- [ ] Admin CMS UI (settings, pages, media+alt, SEO fields, publish)
-- [ ] Public site reads published CMS content (prerender/SSR for SEO)
-- [ ] Pricing page + config-driven Pro prices
+- [x] Admin CMS UI (settings, pages, media+alt, SEO fields, publish)
+- [~] Public site reads published CMS content (prerender/SSR for SEO)
+- [x] Pricing page + config-driven Pro prices
 - [ ] Paddle checkout + webhooks
 - [ ] Dashboard: licenses, device deactivate, billing portal link
 - [ ] License activate/validate API
-- [ ] Admin operations panel (users/licenses/contacts)
+- [x] Admin operations panel (users/licenses/contacts) — contacts + CMS ops (users/licenses later)
 
 ### Phase C — Privacy, harden, polish, audit
 

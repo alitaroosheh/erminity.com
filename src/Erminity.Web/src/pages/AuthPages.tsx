@@ -147,15 +147,22 @@ export function AccountPage() {
           <div>{user.roles.join(', ') || 'User'}</div>
         </div>
       </div>
-      <button
-        type="button"
-        className="btn btn-ghost"
-        onClick={() => {
-          void logout()
-        }}
-      >
-        {t('auth.signOut')}
-      </button>
+      <div className="hero__cta" style={{ marginBottom: '1rem' }}>
+        {user.roles.includes('Admin') && (
+          <Link className="btn btn-primary" to={`/${locale}/admin`}>
+            Open Admin CMS
+          </Link>
+        )}
+        <button
+          type="button"
+          className="btn btn-ghost"
+          onClick={() => {
+            void logout()
+          }}
+        >
+          {t('auth.signOut')}
+        </button>
+      </div>
     </div>
   )
 }

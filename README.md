@@ -42,6 +42,8 @@ Web: http://localhost:8088
 
 Default admin (change immediately): `admin@erminity.com` / `ChangeMe!Erminity1`
 
+Admin CMS (after sign-in): http://localhost:8088/en/admin
+
 ## Theme
 
 **Ermine Night** — charcoal `#0F1419`, gold `#D4A017`, teal `#3D8B8B`.

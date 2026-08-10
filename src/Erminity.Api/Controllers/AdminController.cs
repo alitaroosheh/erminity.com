@@ -12,29 +12,37 @@ namespace Erminity.Api.Controllers;
 [Route("api/admin")]
 public class AdminController : ControllerBase
 {
-    private readonly AppDbContext _db;
+    private static readonly HashSet<string> AllowedImageTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/png", "image/jpeg", "image/webp", "image/gif", "image/svg+xml", "image/x-icon", "image/vnd.microsoft.icon"
+    };
 
-    public AdminController(AppDbContext db) => _db = db;
+    private readonly AppDbContext _db;
+    private readonly IWebHostEnvironment _env;
+
+    public AdminController(AppDbContext db, IWebHostEnvironment env)
+    {
+        _db = db;
+        _env = env;
+    }
 
     [HttpGet("settings")]
-    public async Task<IActionResult> GetSettings(CancellationToken ct)
-    {
-        var s = await _db.SiteSettings.AsNoTracking().FirstAsync(ct);
-        return Ok(s);
-    }
+    public async Task<IActionResult> GetSettings(CancellationToken ct) =>
+        Ok(await _db.SiteSettings.AsNoTracking().FirstAsync(ct));
 
     [HttpPut("settings")]
     public async Task<IActionResult> UpdateSettings([FromBody] SiteSettingsUpdate dto, CancellationToken ct)
     {
         var s = await _db.SiteSettings.FirstAsync(ct);
-        s.SiteName = dto.SiteName;
-        s.Slogan = dto.Slogan;
-        s.FaviconMediaId = dto.FaviconMediaId;
-        s.LogoMediaId = dto.LogoMediaId;
-        s.LegalName = dto.LegalName;
-        s.LegalAddress = dto.LegalAddress;
-        s.PrivacyEmail = dto.PrivacyEmail;
-        s.Jurisdiction = dto.Jurisdiction;
+        s.SiteName = dto.SiteName.Trim();
+        s.Slogan = dto.Slogan.Trim();
+        s.FaviconMediaId = NullIfEmpty(dto.FaviconMediaId);
+        s.LogoMediaId = NullIfEmpty(dto.LogoMediaId);
+        s.DefaultOgImageMediaId = NullIfEmpty(dto.DefaultOgImageMediaId);
+        s.LegalName = NullIfEmpty(dto.LegalName);
+        s.LegalAddress = NullIfEmpty(dto.LegalAddress);
+        s.PrivacyEmail = NullIfEmpty(dto.PrivacyEmail);
+        s.Jurisdiction = NullIfEmpty(dto.Jurisdiction);
         s.UpdatedAt = DateTimeOffset.UtcNow;
         await _db.SaveChangesAsync(ct);
         await Audit("settings.update", nameof(SiteSettings), s.Id.ToString(), ct);
@@ -49,11 +57,11 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> UpdatePricing([FromBody] PricingUpdate dto, CancellationToken ct)
     {
         var p = await _db.PricingConfigs.FirstAsync(ct);
-        p.Currency = dto.Currency;
+        p.Currency = string.IsNullOrWhiteSpace(dto.Currency) ? "USD" : dto.Currency.Trim().ToUpperInvariant();
         p.ProMonthlyPrice = dto.ProMonthlyPrice;
         p.ProYearlyPrice = dto.ProYearlyPrice;
-        p.PaddlePriceIdMonthly = dto.PaddlePriceIdMonthly;
-        p.PaddlePriceIdYearly = dto.PaddlePriceIdYearly;
+        p.PaddlePriceIdMonthly = NullIfEmpty(dto.PaddlePriceIdMonthly);
+        p.PaddlePriceIdYearly = NullIfEmpty(dto.PaddlePriceIdYearly);
         p.ShowComingSoonWhenEmpty = dto.ShowComingSoonWhenEmpty;
         p.UpdatedAt = DateTimeOffset.UtcNow;
         await _db.SaveChangesAsync(ct);
@@ -64,6 +72,291 @@ public class AdminController : ControllerBase
     [HttpGet("contacts")]
     public async Task<IActionResult> Contacts(CancellationToken ct) =>
         Ok(await _db.ContactRequests.AsNoTracking().OrderByDescending(c => c.CreatedAt).Take(200).ToListAsync(ct));
+
+    [HttpPost("contacts/{id:guid}/handled")]
+    public async Task<IActionResult> MarkContactHandled(Guid id, CancellationToken ct)
+    {
+        var c = await _db.ContactRequests.FirstOrDefaultAsync(x => x.Id == id, ct);
+        if (c is null) return NotFound();
+        c.IsHandled = true;
+        await _db.SaveChangesAsync(ct);
+        await Audit("contact.handled", nameof(ContactRequest), id.ToString(), ct);
+        return Ok(c);
+    }
+
+    [HttpGet("media")]
+    public async Task<IActionResult> ListMedia(CancellationToken ct)
+    {
+        var items = await _db.MediaAssets.AsNoTracking()
+            .OrderByDescending(m => m.CreatedAt)
+            .Take(200)
+            .Select(m => new
+            {
+                m.Id,
+                m.FileName,
+                m.ContentType,
+                m.AltText,
+                m.Title,
+                m.Caption,
+                m.SizeBytes,
+                m.CreatedAt,
+                url = $"/api/public/media/{m.Id}"
+            })
+            .ToListAsync(ct);
+        return Ok(items);
+    }
+
+    [HttpPost("media")]
+    [RequestSizeLimit(8_000_000)]
+    public async Task<IActionResult> UploadMedia(
+        IFormFile file,
+        [FromForm] string altText,
+        [FromForm] string? title,
+        [FromForm] string? caption,
+        CancellationToken ct)
+    {
+        if (file is null || file.Length == 0) return BadRequest(new { error = "file_required" });
+        if (string.IsNullOrWhiteSpace(altText)) return BadRequest(new { error = "alt_required" });
+        if (file.Length > 5_000_000) return BadRequest(new { error = "file_too_large" });
+        if (!AllowedImageTypes.Contains(file.ContentType)) return BadRequest(new { error = "invalid_type" });
+
+        var id = Guid.NewGuid();
+        var ext = Path.GetExtension(file.FileName);
+        if (string.IsNullOrWhiteSpace(ext) || ext.Length > 8) ext = GuessExtension(file.ContentType);
+        var safeName = $"{id:N}{ext.ToLowerInvariant()}";
+        var mediaRoot = Path.Combine(_env.ContentRootPath, "media");
+        Directory.CreateDirectory(mediaRoot);
+        var path = Path.Combine(mediaRoot, safeName);
+
+        await using (var stream = System.IO.File.Create(path))
+            await file.CopyToAsync(stream, ct);
+
+        var asset = new MediaAsset
+        {
+            Id = id,
+            FileName = Path.GetFileName(file.FileName),
+            ContentType = file.ContentType,
+            StoragePath = safeName,
+            AltText = altText.Trim(),
+            Title = NullIfEmpty(title),
+            Caption = NullIfEmpty(caption),
+            SizeBytes = file.Length
+        };
+        _db.MediaAssets.Add(asset);
+        await _db.SaveChangesAsync(ct);
+        await Audit("media.upload", nameof(MediaAsset), id.ToString(), ct);
+
+        return Ok(new
+        {
+            asset.Id,
+            asset.FileName,
+            asset.ContentType,
+            asset.AltText,
+            asset.Title,
+            asset.Caption,
+            asset.SizeBytes,
+            asset.CreatedAt,
+            url = $"/api/public/media/{asset.Id}"
+        });
+    }
+
+    [HttpPut("media/{id:guid}")]
+    public async Task<IActionResult> UpdateMedia(Guid id, [FromBody] MediaUpdate dto, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(dto.AltText)) return BadRequest(new { error = "alt_required" });
+        var asset = await _db.MediaAssets.FirstOrDefaultAsync(m => m.Id == id, ct);
+        if (asset is null) return NotFound();
+        asset.AltText = dto.AltText.Trim();
+        asset.Title = NullIfEmpty(dto.Title);
+        asset.Caption = NullIfEmpty(dto.Caption);
+        await _db.SaveChangesAsync(ct);
+        await Audit("media.update", nameof(MediaAsset), id.ToString(), ct);
+        return Ok(asset);
+    }
+
+    [HttpDelete("media/{id:guid}")]
+    public async Task<IActionResult> DeleteMedia(Guid id, CancellationToken ct)
+    {
+        var asset = await _db.MediaAssets.FirstOrDefaultAsync(m => m.Id == id, ct);
+        if (asset is null) return NotFound();
+        var path = Path.Combine(_env.ContentRootPath, "media", asset.StoragePath);
+        if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+        _db.MediaAssets.Remove(asset);
+        await _db.SaveChangesAsync(ct);
+        await Audit("media.delete", nameof(MediaAsset), id.ToString(), ct);
+        return NoContent();
+    }
+
+    [HttpGet("pages")]
+    public async Task<IActionResult> ListPages(CancellationToken ct)
+    {
+        var pages = await _db.CmsPages.AsNoTracking()
+            .Include(p => p.Locales)
+            .OrderBy(p => p.Slug)
+            .Select(p => new
+            {
+                p.Id,
+                p.Slug,
+                p.IsPublished,
+                p.UpdatedAt,
+                locales = p.Locales.Select(l => l.Locale).ToArray()
+            })
+            .ToListAsync(ct);
+        return Ok(pages);
+    }
+
+    [HttpGet("pages/{id:guid}")]
+    public async Task<IActionResult> GetPage(Guid id, [FromQuery] string locale = "en", CancellationToken ct = default)
+    {
+        locale = NormalizeLocale(locale);
+        var page = await _db.CmsPages.AsNoTracking()
+            .Include(p => p.Locales).ThenInclude(l => l.Sections).ThenInclude(s => s.Blocks)
+            .FirstOrDefaultAsync(p => p.Id == id, ct);
+        if (page is null) return NotFound();
+        return Ok(MapAdminPage(page, locale));
+    }
+
+    [HttpPost("pages")]
+    public async Task<IActionResult> CreatePage([FromBody] CreatePageRequest dto, CancellationToken ct)
+    {
+        var slug = dto.Slug.Trim().ToLowerInvariant();
+        if (string.IsNullOrWhiteSpace(slug)) return BadRequest(new { error = "slug_required" });
+        if (await _db.CmsPages.AnyAsync(p => p.Slug == slug, ct))
+            return Conflict(new { error = "slug_taken" });
+
+        var page = new CmsPage { Id = Guid.NewGuid(), Slug = slug, IsPublished = false };
+        foreach (var loc in new[] { "en", "de", "fr", "ar" })
+        {
+            page.Locales.Add(new CmsPageLocale
+            {
+                Id = Guid.NewGuid(),
+                Locale = loc,
+                Title = string.IsNullOrWhiteSpace(dto.Title) ? slug : dto.Title.Trim(),
+                Sections =
+                {
+                    new CmsSection
+                    {
+                        Id = Guid.NewGuid(),
+                        Key = "hero",
+                        SortOrder = 0,
+                        Blocks =
+                        {
+                            new CmsBlock { Id = Guid.NewGuid(), Type = "text", Text = "Headline", SortOrder = 0 },
+                            new CmsBlock { Id = Guid.NewGuid(), Type = "text", Text = "Supporting sentence", SortOrder = 1 },
+                            new CmsBlock { Id = Guid.NewGuid(), Type = "cta", CtaLabel = "Get Pro", CtaHref = "/pricing", SortOrder = 2 }
+                        }
+                    }
+                }
+            });
+        }
+
+        _db.CmsPages.Add(page);
+        await _db.SaveChangesAsync(ct);
+        await Audit("page.create", nameof(CmsPage), page.Id.ToString(), ct);
+        return Ok(MapAdminPage(page, "en"));
+    }
+
+    [HttpPut("pages/{id:guid}")]
+    public async Task<IActionResult> UpdatePage(Guid id, [FromBody] UpdatePageRequest dto, CancellationToken ct)
+    {
+        var locale = NormalizeLocale(dto.Locale);
+        var page = await _db.CmsPages
+            .Include(p => p.Locales).ThenInclude(l => l.Sections).ThenInclude(s => s.Blocks)
+            .FirstOrDefaultAsync(p => p.Id == id, ct);
+        if (page is null) return NotFound();
+
+        page.IsPublished = dto.IsPublished;
+        page.UpdatedAt = DateTimeOffset.UtcNow;
+
+        var loc = page.Locales.FirstOrDefault(l => l.Locale == locale);
+        if (loc is null)
+        {
+            loc = new CmsPageLocale { Id = Guid.NewGuid(), Locale = locale, PageId = page.Id };
+            page.Locales.Add(loc);
+        }
+
+        loc.Title = dto.Title.Trim();
+        loc.MetaDescription = NullIfEmpty(dto.MetaDescription);
+        loc.CanonicalPath = NullIfEmpty(dto.CanonicalPath);
+        loc.Robots = string.IsNullOrWhiteSpace(dto.Robots) ? "index,follow" : dto.Robots.Trim();
+        loc.OgTitle = NullIfEmpty(dto.OgTitle);
+        loc.OgDescription = NullIfEmpty(dto.OgDescription);
+        loc.OgImageMediaId = dto.OgImageMediaId;
+
+        _db.CmsBlocks.RemoveRange(loc.Sections.SelectMany(s => s.Blocks));
+        _db.CmsSections.RemoveRange(loc.Sections);
+        loc.Sections.Clear();
+
+        var order = 0;
+        foreach (var section in dto.Sections ?? [])
+        {
+            var sec = new CmsSection
+            {
+                Id = Guid.NewGuid(),
+                Key = string.IsNullOrWhiteSpace(section.Key) ? $"section-{order}" : section.Key.Trim(),
+                SortOrder = order++
+            };
+            var bOrder = 0;
+            foreach (var block in section.Blocks ?? [])
+            {
+                if (block.Type == "image" && block.MediaId is null)
+                    return BadRequest(new { error = "image_media_required" });
+
+                sec.Blocks.Add(new CmsBlock
+                {
+                    Id = Guid.NewGuid(),
+                    Type = string.IsNullOrWhiteSpace(block.Type) ? "text" : block.Type.Trim(),
+                    Text = block.Text,
+                    MediaId = block.MediaId,
+                    CtaLabel = block.CtaLabel,
+                    CtaHref = block.CtaHref,
+                    SortOrder = bOrder++
+                });
+            }
+
+            loc.Sections.Add(sec);
+        }
+
+        await _db.SaveChangesAsync(ct);
+        await Audit("page.update", nameof(CmsPage), page.Id.ToString(), ct);
+        return Ok(MapAdminPage(page, locale));
+    }
+
+    private object MapAdminPage(CmsPage page, string locale)
+    {
+        var loc = page.Locales.FirstOrDefault(l => l.Locale == locale)
+                  ?? page.Locales.FirstOrDefault(l => l.Locale == "en")
+                  ?? page.Locales.FirstOrDefault();
+
+        return new
+        {
+            page.Id,
+            page.Slug,
+            page.IsPublished,
+            page.UpdatedAt,
+            locale = loc?.Locale ?? locale,
+            availableLocales = page.Locales.Select(l => l.Locale).OrderBy(x => x).ToArray(),
+            title = loc?.Title ?? "",
+            metaDescription = loc?.MetaDescription,
+            canonicalPath = loc?.CanonicalPath,
+            robots = loc?.Robots ?? "index,follow",
+            ogTitle = loc?.OgTitle,
+            ogDescription = loc?.OgDescription,
+            ogImageMediaId = loc?.OgImageMediaId,
+            sections = (loc?.Sections ?? []).OrderBy(s => s.SortOrder).Select(s => new
+            {
+                key = s.Key,
+                blocks = s.Blocks.OrderBy(b => b.SortOrder).Select(b => new
+                {
+                    type = b.Type,
+                    text = b.Text,
+                    mediaId = b.MediaId,
+                    ctaLabel = b.CtaLabel,
+                    ctaHref = b.CtaHref
+                })
+            })
+        };
+    }
 
     private async Task Audit(string action, string entityType, string? entityId, CancellationToken ct)
     {
@@ -78,11 +371,33 @@ public class AdminController : ControllerBase
         await _db.SaveChangesAsync(ct);
     }
 
+    private static string NormalizeLocale(string locale) =>
+        locale.ToLowerInvariant() switch
+        {
+            "de" or "fr" or "ar" or "en" => locale.ToLowerInvariant(),
+            _ => "en"
+        };
+
+    private static string? NullIfEmpty(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+    private static string GuessExtension(string contentType) => contentType.ToLowerInvariant() switch
+    {
+        "image/png" => ".png",
+        "image/jpeg" => ".jpg",
+        "image/webp" => ".webp",
+        "image/gif" => ".gif",
+        "image/svg+xml" => ".svg",
+        "image/x-icon" or "image/vnd.microsoft.icon" => ".ico",
+        _ => ".bin"
+    };
+
     public sealed record SiteSettingsUpdate(
         string SiteName,
         string Slogan,
         string? FaviconMediaId,
         string? LogoMediaId,
+        string? DefaultOgImageMediaId,
         string? LegalName,
         string? LegalAddress,
         string? PrivacyEmail,
@@ -95,4 +410,29 @@ public class AdminController : ControllerBase
         string? PaddlePriceIdMonthly,
         string? PaddlePriceIdYearly,
         bool ShowComingSoonWhenEmpty);
+
+    public sealed record MediaUpdate(string AltText, string? Title, string? Caption);
+
+    public sealed record CreatePageRequest(string Slug, string? Title);
+
+    public sealed record UpdatePageRequest(
+        string Locale,
+        bool IsPublished,
+        string Title,
+        string? MetaDescription,
+        string? CanonicalPath,
+        string? Robots,
+        string? OgTitle,
+        string? OgDescription,
+        Guid? OgImageMediaId,
+        List<SectionDto>? Sections);
+
+    public sealed record SectionDto(string Key, List<BlockDto>? Blocks);
+
+    public sealed record BlockDto(
+        string Type,
+        string? Text,
+        Guid? MediaId,
+        string? CtaLabel,
+        string? CtaHref);
 }

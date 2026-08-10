@@ -243,6 +243,61 @@ using (var scope = app.Services.CreateScope())
         await userManager.AddToRoleAsync(admin, "Admin");
         await userManager.AddToRoleAsync(admin, "User");
     }
+
+    Directory.CreateDirectory(Path.Combine(app.Environment.ContentRootPath, "media"));
+
+    if (!await db.CmsPages.AnyAsync(p => p.Slug == "home"))
+    {
+        var home = new CmsPage
+        {
+            Id = Guid.NewGuid(),
+            Slug = "home",
+            IsPublished = true,
+            Locales =
+            {
+                SeedLocale("en", "Home", "EmbeddedFlow for exact embedded UI",
+                    "Beyond static design tools — bind UI to code symbols, and soon to MQTT and protocols.",
+                    "Get Pro", "Start free"),
+                SeedLocale("de", "Startseite", "EmbeddedFlow für präzise UI-Systeme",
+                    "Mehr als statische Design-Tools — UI an Code-Symbole binden.",
+                    "Pro holen", "Kostenlos starten"),
+                SeedLocale("fr", "Accueil", "EmbeddedFlow pour des interfaces exactes",
+                    "Au-delà des outils de design statiques — liez l’UI aux symboles du code.",
+                    "Passer à Pro", "Commencer gratuitement"),
+                SeedLocale("ar", "الرئيسية", "EmbeddedFlow لواجهات مدمجة دقيقة",
+                    "أبعد من أدوات التصميم الثابتة — اربط الواجهة برموز الشيفرة.",
+                    "الحصول على Pro", "ابدأ مجاناً"),
+            }
+        };
+        db.CmsPages.Add(home);
+        await db.SaveChangesAsync();
+    }
 }
 
 app.Run();
+
+static CmsPageLocale SeedLocale(string locale, string title, string headline, string lead, string ctaPro, string ctaFree) =>
+    new()
+    {
+        Id = Guid.NewGuid(),
+        Locale = locale,
+        Title = title,
+        MetaDescription = lead,
+        Robots = "index,follow",
+        Sections =
+        {
+            new CmsSection
+            {
+                Id = Guid.NewGuid(),
+                Key = "hero",
+                SortOrder = 0,
+                Blocks =
+                {
+                    new CmsBlock { Id = Guid.NewGuid(), Type = "text", Text = headline, SortOrder = 0 },
+                    new CmsBlock { Id = Guid.NewGuid(), Type = "text", Text = lead, SortOrder = 1 },
+                    new CmsBlock { Id = Guid.NewGuid(), Type = "cta", CtaLabel = ctaPro, CtaHref = "/pricing", SortOrder = 2 },
+                    new CmsBlock { Id = Guid.NewGuid(), Type = "cta", CtaLabel = ctaFree, CtaHref = "/download", SortOrder = 3 },
+                }
+            }
+        }
+    };

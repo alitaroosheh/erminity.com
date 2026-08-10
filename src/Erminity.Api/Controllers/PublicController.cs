@@ -10,8 +10,13 @@ namespace Erminity.Api.Controllers;
 public class PublicController : ControllerBase
 {
     private readonly AppDbContext _db;
+    private readonly IWebHostEnvironment _env;
 
-    public PublicController(AppDbContext db) => _db = db;
+    public PublicController(AppDbContext db, IWebHostEnvironment env)
+    {
+        _db = db;
+        _env = env;
+    }
 
     [HttpGet("site")]
     public async Task<IActionResult> GetSite(CancellationToken ct)
@@ -24,7 +29,13 @@ public class PublicController : ControllerBase
             siteName = settings.SiteName,
             slogan = settings.Slogan,
             faviconMediaId = settings.FaviconMediaId,
+            faviconUrl = string.IsNullOrWhiteSpace(settings.FaviconMediaId)
+                ? null
+                : $"/api/public/media/{settings.FaviconMediaId}",
             logoMediaId = settings.LogoMediaId,
+            logoUrl = string.IsNullOrWhiteSpace(settings.LogoMediaId)
+                ? null
+                : $"/api/public/media/{settings.LogoMediaId}",
             legal = new
             {
                 name = settings.LegalName ?? settings.LegalNamePlaceholder,
@@ -43,6 +54,17 @@ public class PublicController : ControllerBase
                                  pricing.ProYearlyPrice is null
             }
         });
+    }
+
+    [HttpGet("media/{id:guid}")]
+    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+    public async Task<IActionResult> GetMedia(Guid id, CancellationToken ct)
+    {
+        var asset = await _db.MediaAssets.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id, ct);
+        if (asset is null) return NotFound();
+        var path = Path.Combine(_env.ContentRootPath, "media", asset.StoragePath);
+        if (!System.IO.File.Exists(path)) return NotFound();
+        return PhysicalFile(path, asset.ContentType, enableRangeProcessing: true);
     }
 
     [HttpGet("pages/{slug}")]
