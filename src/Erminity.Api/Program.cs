@@ -300,13 +300,17 @@ using (var scope = app.Services.CreateScope())
     }
     else
     {
-        var home = await db.CmsPages.Include(p => p.Locales).FirstAsync(p => p.Slug == "home");
-        if (!home.Locales.Any(l => l.Locale == "fa"))
+        var homeId = await db.CmsPages.Where(p => p.Slug == "home").Select(p => p.Id).FirstAsync();
+        var hasFa = await db.CmsPageLocales.AnyAsync(l => l.PageId == homeId && l.Locale == "fa");
+        if (!hasFa)
         {
-            home.Locales.Add(SeedLocale("fa", "خانه", "EmbeddedFlow برای رابط کاربری دقیق embedded",
+            var fa = SeedLocale("fa", "خانه", "EmbeddedFlow برای رابط کاربری دقیق embedded",
                 "فراتر از ابزارهای طراحی ایستا — اتصال UI به سیمبل‌های کد.",
-                "دریافت Pro", "شروع رایگان"));
-            home.UpdatedAt = DateTimeOffset.UtcNow;
+                "دریافت Pro", "شروع رایگان");
+            fa.PageId = homeId;
+            db.CmsPageLocales.Add(fa);
+            await db.CmsPages.Where(p => p.Id == homeId)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.UpdatedAt, DateTimeOffset.UtcNow));
             await db.SaveChangesAsync();
         }
     }
