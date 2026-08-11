@@ -25,6 +25,8 @@ public class License
     public LicenseStatus Status { get; set; } = LicenseStatus.Active;
     public string KeyHash { get; set; } = string.Empty;
     public string KeyPrefix { get; set; } = string.Empty;
+    /// <summary>Data-protected license key for dashboard reveal.</summary>
+    public string KeyProtected { get; set; } = string.Empty;
     public string? PaddleSubscriptionId { get; set; }
     public string BillingInterval { get; set; } = "month";
     public DateTimeOffset? CurrentPeriodEnd { get; set; }

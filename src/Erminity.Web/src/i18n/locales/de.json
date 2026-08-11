@@ -96,5 +96,21 @@
     "text": "Wir nutzen notwendige Cookies für den Betrieb der Seite. Optionale Analyse bleibt aus, bis Sie zustimmen.",
     "necessary": "Nur notwendig",
     "accept": "Alle akzeptieren"
+  },
+  "licenses": {
+    "title": "Lizenzen",
+    "lead": "Lizenzschlüssel und gebundenes Gerät verwalten — Deaktivieren zum Gerätewechsel.",
+    "backAccount": "← Konto",
+    "empty": "Noch keine Lizenzen. Ein Admin kann einen Testschlüssel ausstellen.",
+    "copy": "Schlüssel kopieren",
+    "copied": "Kopiert",
+    "features": "Funktionen",
+    "periodEnd": "Laufzeitende",
+    "device": "Gebundenes Gerät",
+    "noDevice": "Noch nicht aktiviert. Schlüssel in der IDE-Erweiterung eingeben.",
+    "activated": "Aktiviert",
+    "deactivate": "Gerät deaktivieren",
+    "loadError": "Lizenzen konnten nicht geladen werden.",
+    "deactivateError": "Gerät konnte nicht deaktiviert werden."
   }
 }

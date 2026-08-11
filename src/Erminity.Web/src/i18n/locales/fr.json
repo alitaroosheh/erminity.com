@@ -96,5 +96,21 @@
     "text": "Nous utilisons des cookies nécessaires. L’analytique optionnelle reste désactivée jusqu’à votre accord.",
     "necessary": "Nécessaires seulement",
     "accept": "Tout accepter"
+  },
+  "licenses": {
+    "title": "Licences",
+    "lead": "Voir la clé, l’appareil lié, et désactiver pour changer de machine.",
+    "backAccount": "← Compte",
+    "empty": "Aucune licence. Un admin peut émettre une clé de test.",
+    "copy": "Copier la clé",
+    "copied": "Copié",
+    "features": "Fonctions",
+    "periodEnd": "Fin de période",
+    "device": "Appareil lié",
+    "noDevice": "Pas encore activé. Entrez la clé dans l’extension IDE.",
+    "activated": "Activé",
+    "deactivate": "Désactiver l’appareil",
+    "loadError": "Impossible de charger les licences.",
+    "deactivateError": "Impossible de désactiver l’appareil."
   }
 }

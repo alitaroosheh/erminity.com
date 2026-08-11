@@ -18,6 +18,8 @@ import { AdminMedia } from './admin/AdminMedia'
 import { AdminPages } from './admin/AdminPages'
 import { AdminPageEdit } from './admin/AdminPageEdit'
 import { AdminContacts } from './admin/AdminContacts'
+import { AdminLicenses } from './admin/AdminLicenses'
+import { LicensesPage } from './pages/LicensesPage'
 
 const LOCALES = SUPPORTED_LOCALES
 
@@ -58,6 +60,7 @@ export default function App() {
           <Route path="signin" element={<SignInPage />} />
           <Route path="signup" element={<SignUpPage />} />
           <Route path="account" element={<AccountPage />} />
+          <Route path="licenses" element={<LicensesPage />} />
           <Route path="privacy" element={<LegalPage kind="privacy" />} />
           <Route path="terms" element={<LegalPage kind="terms" />} />
           <Route path="cookies" element={<LegalPage kind="cookies" />} />
@@ -77,6 +80,7 @@ export default function App() {
             <Route path="pages" element={<AdminPages />} />
             <Route path="pages/:pageId" element={<AdminPageEdit />} />
             <Route path="contacts" element={<AdminContacts />} />
+            <Route path="licenses" element={<AdminLicenses />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/en" replace />} />

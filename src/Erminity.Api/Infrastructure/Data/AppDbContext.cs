@@ -29,6 +29,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<License>(e =>
         {
+            e.HasIndex(x => x.KeyHash).IsUnique();
             e.HasIndex(x => x.KeyPrefix);
             e.HasIndex(x => x.PaddleSubscriptionId);
             e.HasOne(x => x.User).WithMany(u => u.Licenses).HasForeignKey(x => x.UserId);

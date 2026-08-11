@@ -378,9 +378,9 @@ Ignore prior experiments under sibling folders (`ErmineBroker`, `Erminity.com ol
 - [~] Public site reads published CMS content (prerender/SSR for SEO)
 - [x] Pricing page + config-driven Pro prices
 - [ ] Paddle checkout + webhooks
-- [ ] Dashboard: licenses, device deactivate, billing portal link
-- [ ] License activate/validate API
-- [x] Admin operations panel (users/licenses/contacts) — contacts + CMS ops (users/licenses later)
+- [x] Dashboard: licenses, device deactivate, billing portal link (licenses + deactivate done; billing portal with Paddle later)
+- [x] License activate/validate API
+- [x] Admin operations panel (users/licenses/contacts) — licenses + contacts (+ CMS)
 
 ### Phase C — Privacy, harden, polish, audit
 

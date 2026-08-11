@@ -1,7 +1,9 @@
 using System.Security.Claims;
 using Erminity.Api.Domain.Entities;
 using Erminity.Api.Infrastructure.Data;
+using Erminity.Api.Infrastructure.Licensing;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,11 +21,19 @@ public class AdminController : ControllerBase
 
     private readonly AppDbContext _db;
     private readonly IWebHostEnvironment _env;
+    private readonly LicenseKeyService _keys;
+    private readonly UserManager<ApplicationUser> _users;
 
-    public AdminController(AppDbContext db, IWebHostEnvironment env)
+    public AdminController(
+        AppDbContext db,
+        IWebHostEnvironment env,
+        LicenseKeyService keys,
+        UserManager<ApplicationUser> users)
     {
         _db = db;
         _env = env;
+        _keys = keys;
+        _users = users;
     }
 
     [HttpGet("settings")]
@@ -72,6 +82,99 @@ public class AdminController : ControllerBase
     [HttpGet("contacts")]
     public async Task<IActionResult> Contacts(CancellationToken ct) =>
         Ok(await _db.ContactRequests.AsNoTracking().OrderByDescending(c => c.CreatedAt).Take(200).ToListAsync(ct));
+
+    [HttpGet("licenses")]
+    public async Task<IActionResult> ListLicenses(CancellationToken ct)
+    {
+        var items = await _db.Licenses.AsNoTracking()
+            .Include(l => l.User)
+            .Include(l => l.Device)
+            .OrderByDescending(l => l.CreatedAt)
+            .Take(300)
+            .Select(l => new
+            {
+                l.Id,
+                l.Plan,
+                l.Status,
+                l.KeyPrefix,
+                l.BillingInterval,
+                l.CurrentPeriodEnd,
+                l.CreatedAt,
+                userEmail = l.User != null ? l.User.Email : null,
+                deviceLabel = l.Device != null ? l.Device.DeviceLabel : null,
+                ideProduct = l.Device != null ? l.Device.IdeProduct : null,
+                hasDevice = l.Device != null
+            })
+            .ToListAsync(ct);
+        return Ok(items);
+    }
+
+    [HttpPost("licenses")]
+    public async Task<IActionResult> IssueLicense([FromBody] IssueLicenseRequest dto, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(dto.UserEmail))
+            return BadRequest(new { error = "email_required" });
+
+        var user = await _users.FindByEmailAsync(dto.UserEmail.Trim());
+        if (user is null) return NotFound(new { error = "user_not_found" });
+
+        if (!Enum.TryParse<LicensePlan>(dto.Plan, true, out var plan) || plan == LicensePlan.Free)
+            plan = LicensePlan.Pro;
+
+        var interval = string.Equals(dto.BillingInterval, "year", StringComparison.OrdinalIgnoreCase) ? "year" : "month";
+        var days = dto.PeriodDays is > 0 and <= 3660 ? dto.PeriodDays.Value : (interval == "year" ? 365 : 30);
+        var (rawKey, prefix, hash, protectedKey) = _keys.Issue(plan);
+
+        var license = new License
+        {
+            UserId = user.Id,
+            Plan = plan,
+            Status = LicenseStatus.Active,
+            KeyHash = hash,
+            KeyPrefix = prefix,
+            KeyProtected = protectedKey,
+            BillingInterval = interval,
+            CurrentPeriodEnd = DateTimeOffset.UtcNow.AddDays(days)
+        };
+        _db.Licenses.Add(license);
+        await _db.SaveChangesAsync(ct);
+        await Audit("license.issue", nameof(License), license.Id.ToString(), ct);
+
+        return Ok(new
+        {
+            license.Id,
+            plan = license.Plan.ToString(),
+            status = license.Status.ToString(),
+            key = rawKey,
+            keyPrefix = prefix,
+            billingInterval = license.BillingInterval,
+            currentPeriodEnd = license.CurrentPeriodEnd,
+            userEmail = user.Email
+        });
+    }
+
+    [HttpPost("licenses/{id:guid}/revoke")]
+    public async Task<IActionResult> RevokeLicense(Guid id, CancellationToken ct)
+    {
+        var license = await _db.Licenses.Include(l => l.Device).FirstOrDefaultAsync(l => l.Id == id, ct);
+        if (license is null) return NotFound();
+        license.Status = LicenseStatus.Revoked;
+        if (license.Device is not null) _db.DeviceActivations.Remove(license.Device);
+        await _db.SaveChangesAsync(ct);
+        await Audit("license.revoke", nameof(License), id.ToString(), ct);
+        return Ok(new { ok = true });
+    }
+
+    [HttpPost("licenses/{id:guid}/force-deactivate")]
+    public async Task<IActionResult> ForceDeactivate(Guid id, CancellationToken ct)
+    {
+        var license = await _db.Licenses.Include(l => l.Device).FirstOrDefaultAsync(l => l.Id == id, ct);
+        if (license is null) return NotFound();
+        if (license.Device is not null) _db.DeviceActivations.Remove(license.Device);
+        await _db.SaveChangesAsync(ct);
+        await Audit("license.force_deactivate", nameof(License), id.ToString(), ct);
+        return Ok(new { ok = true });
+    }
 
     [HttpPost("contacts/{id:guid}/handled")]
     public async Task<IActionResult> MarkContactHandled(Guid id, CancellationToken ct)
@@ -410,6 +513,12 @@ public class AdminController : ControllerBase
         string? PaddlePriceIdMonthly,
         string? PaddlePriceIdYearly,
         bool ShowComingSoonWhenEmpty);
+
+    public sealed record IssueLicenseRequest(
+        string UserEmail,
+        string Plan,
+        string? BillingInterval,
+        int? PeriodDays);
 
     public sealed record MediaUpdate(string AltText, string? Title, string? Caption);
 

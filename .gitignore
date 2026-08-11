@@ -7,4 +7,5 @@ dist/
 .vs/
 media/
 uploads/
+dp-keys/
 **/tsconfig.tsbuildinfo

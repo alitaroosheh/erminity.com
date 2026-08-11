@@ -44,6 +44,9 @@ Default admin (change immediately): `admin@erminity.com` / `ChangeMe!Erminity1`
 
 Admin CMS (after sign-in): http://localhost:8088/en/admin
 
+Licenses dashboard: http://localhost:8088/en/licenses  
+Issue test keys: Admin → Licenses · API notes: [docs/LICENSE-API.md](docs/LICENSE-API.md)
+
 ## Theme
 
 **Ermine Night** — charcoal `#0F1419`, gold `#D4A017`, teal `#3D8B8B`.

@@ -1,10 +1,14 @@
 using Erminity.Api.Domain.Entities;
 using Erminity.Api.Infrastructure.Data;
 using Erminity.Api.Infrastructure.Email;
+using Erminity.Api.Infrastructure.Licensing;
 using Erminity.Api.Infrastructure.Security;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
+using System.Threading.RateLimiting;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -131,7 +135,21 @@ if (!string.IsNullOrWhiteSpace(githubClientId))
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(
+        builder.Environment.ContentRootPath, "dp-keys")));
+builder.Services.AddSingleton<LicenseKeyService>();
 builder.Services.AddHttpClient<IEmailSender, ResendEmailSender>();
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddFixedWindowLimiter("license", limiter =>
+    {
+        limiter.PermitLimit = 30;
+        limiter.Window = TimeSpan.FromMinutes(1);
+        limiter.QueueLimit = 0;
+    });
+});
 
 var corsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>()
                   ?? ["http://localhost:5173", "http://localhost:3000", "http://localhost:8088"];
@@ -169,6 +187,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseCors("Web");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
@@ -182,6 +201,9 @@ using (var scope = app.Services.CreateScope())
     var appManager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
     await db.Database.EnsureCreatedAsync();
+    await db.Database.ExecuteSqlRawAsync("""
+        ALTER TABLE "Licenses" ADD COLUMN IF NOT EXISTS "KeyProtected" text NOT NULL DEFAULT '';
+        """);
 
     foreach (var role in new[] { "User", "Admin" })
     {
@@ -245,6 +267,7 @@ using (var scope = app.Services.CreateScope())
     }
 
     Directory.CreateDirectory(Path.Combine(app.Environment.ContentRootPath, "media"));
+    Directory.CreateDirectory(Path.Combine(app.Environment.ContentRootPath, "dp-keys"));
 
     if (!await db.CmsPages.AnyAsync(p => p.Slug == "home"))
     {

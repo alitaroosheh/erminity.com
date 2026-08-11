@@ -96,5 +96,21 @@
     "text": "We use necessary cookies to run the site. Optional analytics stay off until you allow them.",
     "necessary": "Necessary only",
     "accept": "Accept all"
+  },
+  "licenses": {
+    "title": "Licenses",
+    "lead": "View your license key, bound device, and deactivate to move to another machine.",
+    "backAccount": "← Account",
+    "empty": "No licenses yet. An admin can issue a test key, or buy Pro once Paddle is connected.",
+    "copy": "Copy key",
+    "copied": "Copied",
+    "features": "Features",
+    "periodEnd": "Period ends",
+    "device": "Bound device",
+    "noDevice": "Not activated on a device yet. Enter the key in your IDE extension.",
+    "activated": "Activated",
+    "deactivate": "Deactivate device",
+    "loadError": "Could not load licenses.",
+    "deactivateError": "Could not deactivate device."
   }
 }

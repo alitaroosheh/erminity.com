@@ -26,6 +26,7 @@ export function AdminLayout() {
         <NavLink to={`${prefix}/media`}>Media</NavLink>
         <NavLink to={`${prefix}/pages`}>Pages</NavLink>
         <NavLink to={`${prefix}/contacts`}>Contacts</NavLink>
+        <NavLink to={`${prefix}/licenses`}>Licenses</NavLink>
         <NavLink className="admin-nav__back" to={`/${locale}`}>
           ← Back to site
         </NavLink>

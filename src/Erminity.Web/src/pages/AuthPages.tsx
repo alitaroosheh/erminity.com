@@ -148,6 +148,9 @@ export function AccountPage() {
         </div>
       </div>
       <div className="hero__cta" style={{ marginBottom: '1rem' }}>
+        <Link className="btn btn-teal" to={`/${locale}/licenses`}>
+          {t('licenses.title')}
+        </Link>
         {user.roles.includes('Admin') && (
           <Link className="btn btn-primary" to={`/${locale}/admin`}>
             Open Admin CMS
